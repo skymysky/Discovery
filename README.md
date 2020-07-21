@@ -7,6 +7,7 @@
 
 如果本代码由于Github网速原因无法快速阅读，请访问
 - [Gitee同步镜像](https://gitee.com/Nepxion/Discovery)
+- [Github原镜像](https://github.com/Nepxion/Discovery)
 
 完整代码指南，如下
 - 对于入门级玩家，请参考[指南示例极简版](https://github.com/Nepxion/DiscoveryGuide/tree/simple)获取，分支为simple
@@ -17,7 +18,8 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 - 支持阿里巴巴Nacos、Eureka、Consul和Zookeeper四个服务注册发现中心
 - 支持阿里巴巴Nacos、携程Apollo和Redis三个远程配置中心
 - 支持阿里巴巴Sentinel和Hystrix两个熔断隔离限流降级中间件
-- 支持Uber Jaeger和Twitter Zipkin等遵循Opentracing规范的调用链中间件
+- 支持Uber Jaeger、Apache Skywalking等符合OpenTracing调用链中间件
+- 支持Java Agent解决异步跨线程ThreadLocal上下文传递
 - 支持Prometheus、Grafana和Spring Boot Admin监控中间件
 - 支持Spring Cloud Gateway、Zuul网关和微服务三大模块的灰度发布和路由等一系列功能
 - 支持和兼容Spring Cloud Edgware版、Finchley版、Greenwich版和Hoxton版
@@ -26,8 +28,8 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 - 灰度发布。基于规则订阅的全链路灰度发布，包括切换发布（版本匹配发布、区域匹配发布）和平滑发布（版本权重发布、区域权重发布）
 - 灰度路由。基于Header传递的全链路灰度路由，包括切换路由（版本匹配路由、区域匹配路由、机器IP和端口匹配路由）和平滑路由（版本权重路由、区域权重路由）。可以在网关过滤器、前端界面、负载均衡策略类三个地方实现路由功能
 - 组合式灰度发布和路由，灰度发布和灰度路由的多种组合式规则和策略，前端灰度&网关灰度路由组合式策略
-- 服务监控。包括调用链监控（Tracing）和指标监控（Metrics），CNCF技术委员会通过OpenTelemetry规范整合基于Tracing的OpenTracing规范（官方推荐Jaeger做Backend）和基于Metrics的OpenSensus规范（官方推荐Prometheus做Backend）
-    - 调用链监控（Tracing）包括Header方式、Opentracing方式、日志方式等单个或者组合式的全链路灰度调用链，支持对Sentinel自动埋点。Opentracing方式不支持Edgware版（Spring Boot 1.x.x）
+- 服务监控。包括调用链监控（Tracing）、日志监控（Logging）、指标监控（Metrics），CNCF技术委员会通过OpenTelemetry规范整合基于Tracing的OpenTracing规范（官方推荐Jaeger做Backend）和基于Metrics的OpenSensus规范（官方推荐Prometheus做Backend）。框架支持OpenTracing、Uber Jaeger、Apache Skywalking
+    - 调用链监控（Tracing）包括Header方式、调用链方式、日志方式等单个或者组合式的全链路灰度调用链，支持对Sentinel自动埋点。调用链方式不支持Edgware版（Spring Boot 1.x.x）
     - 指标监控（Metrics）包括Prometheus、Grafana、Spring Boot Admin
 - 服务隔离。基于组和黑/白名单的全链路服务隔离，包括注册准入隔离（基于黑/白名单，包括组和IP地址的准入、最大注册数限制的准入）、消费端隔离（基于组的负载均衡的隔离、基于黑/白名单的IP地址的隔离）和提供端隔离（基于组的Header传值策略的隔离）
 - 环境隔离和路由。基于元数据Metadata的env参数进行隔离，当调用端实例和提供端实例的元数据Metadata环境配置值相等才能调用。环境隔离下，调用端实例找不到符合条件的提供端实例，把流量路由到一个通用或者备份环境。支持网关独立部署和非独立部署两种场景下，动态调度子环境的能力
@@ -49,7 +51,7 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 
 [**Spring Cloud Alibaba**] 阿里巴巴中间件部门开发的Spring Cloud增强套件，致力于提供微服务开发的一站式解决方案。此项目包含开发分布式应用微服务的必需组件，方便开发者通过Spring Cloud编程模型轻松使用这些组件来开发分布式应用服务。依托Spring Cloud Alibaba，只需要添加一些注解和少量配置，就可以将Spring Cloud应用接入阿里微服务解决方案，通过阿里中间件来迅速搭建分布式应用系统
 
-[**OpenTracing**] OpenTracing已进入CNCF，正在为全球的分布式追踪系统提供统一的概念、规范、架构和数据标准。它通过提供平台无关、厂商无关的API，使得开发人员能够方便的添加（或更换）追踪系统的实现。对于存在多样化的技术栈共存的调用链中，Opentracing适配Java、C、Go和.Net等技术栈，实现全链路分布式追踪功能。迄今为止，Uber Jaeger、Twitter Zipkin和Apache Skywalking已经适配了Opentracing规范
+[**OpenTracing**] OpenTracing已进入CNCF，正在为全球的分布式追踪系统提供统一的概念、规范、架构和数据标准。它通过提供平台无关、厂商无关的API，使得开发人员能够方便的添加（或更换）追踪系统的实现。对于存在多样化的技术栈共存的调用链中，OpenTracing适配Java、C、Go和.Net等技术栈，实现全链路分布式追踪功能。迄今为止，Uber Jaeger、Twitter Zipkin和Apache Skywalking已经适配了OpenTracing规范
 
 本框架成为阿里巴巴中间件Nacos和Spring Cloud Alibaba项目的相关开源
 <img src="http://nepxion.gitee.io/docs/discovery-doc/AwardNacos1.jpg" alt="Nacos" width="50%"><img src="http://nepxion.gitee.io/docs/discovery-doc/AwardSCA1.jpg" alt="Spring Cloud Alibaba" width="50%">
@@ -60,10 +62,10 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 - 由于源码中带有的示例功能比较齐全，较为复杂。强烈建议，先学习[指南示例](https://github.com/Nepxion/DiscoveryGuide)
 
 ![](http://nepxion.gitee.io/docs/discovery-doc/Attention.png) 鸣谢
-- 感谢阿里巴巴中间件Nacos和Sentinel团队，尤其是Nacos负责人@于怀，Sentinel负责人@子衿，Spring Cloud Alibaba负责人@亦盏、@洛夜的技术支持
+- 感谢阿里巴巴中间件Nacos和Sentinel团队，尤其是Nacos负责人@于怀，Sentinel负责人@子衿，Spring Cloud Alibaba负责人@小马哥、@亦盏、@洛夜的技术支持
 - 感谢携程Apollo团队，尤其是@宋顺，特意开发OpenApi包和技术支持
-- 感谢代码贡献者，包括@WeihuaWang，@张顺，@Esun，@liumapp，@terranhu，@JikaiSun，@HaoHuang，@FanYang，@Ankeway等
-- 感谢为本框架进行测试验证和问题分析定位的同学，包括@张龙，@CongweiXu，@fan，@阿神，@慕紫，@郝俊仁，@Windon，@杨成，@李鹏，@任学会等
+- 感谢代码贡献者，包括@zifeihan，@Ax1an，@WeihuaWang，@张顺，@Esun，@liumapp，@terranhu，@JikaiSun，@HaoHuang，@FanYang，@Ankeway，@liquanjin等
+- 感谢为本框架进行测试验证和问题分析定位的同学，包括@张龙，@CongweiXu，@fan，@阿神，@慕紫，@郝俊仁，@Windon，@杨成，@李鹏，@任学会，@郭小伟等
 - 感谢为本框架提出宝贵意见和建议的同学
 - 感谢使用本框架的公司和企业。不完全统计，目前社区开源项目已经被如下公司使用或者调研：
 
@@ -143,6 +145,13 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
       <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/fykj.png"></td>
       <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/xhjy.png"></td>
       <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/xywkj.png"></td>
+      <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/zyts.png"></td>
+      <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/wx.png"></td>
+    </tr>
+    <tr align="center">
+      <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/ylyh.png"></td>
+      <td><img style="max-height:70%;max-width:70%;" src="http://nepxion.gitee.io/docs/logo-doc/sqhy.png"></td>
+      <td></td>
       <td></td>
       <td></td>
     </tr>
@@ -157,10 +166,10 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 
 | 框架版本 | 框架分支 | 框架状态 | Spring Cloud版本 | Spring Boot版本 | Spring Cloud Alibaba版本 |
 | --- | --- | --- | --- | --- | --- |
-| 6.0.0 | master | ![](http://nepxion.gitee.io/docs/discovery-doc/Status1.png) | Hoxton<br>Greenwich<br>Finchley | 2.2.x.RELEASE<br>2.1.x.RELEASE<br>2.0.x.RELEASE | 2.2.x.RELEASE<br>2.1.x.RELEASE<br>2.0.x.RELEASE |
+| 6.0.5 | master | ![](http://nepxion.gitee.io/docs/discovery-doc/Status1.png) | Hoxton<br>Greenwich<br>Finchley | 2.2.x.RELEASE<br>2.1.x.RELEASE<br>2.0.x.RELEASE | 2.2.x.RELEASE<br>2.1.x.RELEASE<br>2.0.x.RELEASE |
 | ~~5.6.0~~ | ~~5.x.x~~ | ![](http://nepxion.gitee.io/docs/discovery-doc/Status2.png) | Greenwich | 2.1.x.RELEASE | 2.1.x.RELEASE |
 | ~~4.15.0~~ | ~~4.x.x~~ | ![](http://nepxion.gitee.io/docs/discovery-doc/Status2.png) | Finchley | 2.0.x.RELEASE | 2.0.x.RELEASE |
-| 3.15.0 | 3.x.x | ![](http://nepxion.gitee.io/docs/discovery-doc/Status1.png) | Edgware | 1.5.x.RELEASE | 1.5.x.RELEASE |
+| 3.16.5 | master-3.x.x | ![](http://nepxion.gitee.io/docs/discovery-doc/Status1.png) | Edgware | 1.5.x.RELEASE | 1.5.x.RELEASE |
 | ~~2.0.x~~ | ~~2.x.x~~ | ![](http://nepxion.gitee.io/docs/discovery-doc/Status3.png) | Dalston | 1.x.x.RELEASE | N/A |
 | ~~1.0.x~~ | ~~1.x.x~~ | ![](http://nepxion.gitee.io/docs/discovery-doc/Status3.png) | Camden | 1.x.x.RELEASE | N/A |
 
@@ -168,8 +177,8 @@ Nepxion Discovery【探索】框架架构，基于Spring Cloud Discovery服务�
 
 注意：
 - 6.x.x版本（同时适用于Finchley、Greenwich和Hoxton以及未来的更高版本），将继续维护
-- 5.x.x版本（适用于Greenwich）不再维护，并入到6.x.x版本，对应的5.6.0是最后一个稳定版本
-- 4.x.x版本（适用于Finchley）不再维护，并入到6.x.x版本，对应的4.15.0是最后一个稳定版本
+- 5.x.x版本（适用于Greenwich）不再维护，并入到6.x.x版本，不建议使用
+- 4.x.x版本（适用于Finchley）不再维护，并入到6.x.x版本，不建议使用
 - 3.x.x版本（适用于Edgware）为了照顾老的技术栈公司，将继续维护
 - 2.x.x版本（适用于Dalston）已废弃
 - 1.x.x版本（适用于Camden）已废弃
@@ -418,29 +427,31 @@ Spring Boot Admin监控平台
 | discovery-plugin-framework-consul | 核心框架服务注册发现的Consul实现 |
 | discovery-plugin-framework-zookeeper | 核心框架服务注册发现的Zookeeper实现 |
 | discovery-plugin-framework-nacos | 核心框架服务注册发现的Nacos实现 |
-| discovery-plugin-config-center | 配置中心实现 |
+| discovery-plugin-config-center | 配置中心 |
 | discovery-plugin-config-center-starter-apollo | 配置中心的Apollo Starter |
 | discovery-plugin-config-center-starter-nacos | 配置中心的Nacos Starter |
 | discovery-plugin-config-center-starter-redis | 配置中心的Redis Starter |
-| discovery-plugin-admin-center | 管理中心实现 |
-| discovery-plugin-starter-eureka | 核心Eureka Starter |
-| discovery-plugin-starter-consul | 核心Consul Starter |
-| discovery-plugin-starter-zookeeper | 核心Zookeeper Starter |
-| discovery-plugin-starter-nacos | 核心Nacos Starter |
+| discovery-plugin-admin-center | 管理中心 |
+| discovery-plugin-starter-eureka | 核心框架的Eureka Starter |
+| discovery-plugin-starter-consul | 核心框架的Consul Starter |
+| discovery-plugin-starter-zookeeper | 核心框架的Zookeeper Starter |
+| discovery-plugin-starter-nacos | 核心框架的Nacos Starter |
 | discovery-plugin-strategy | 路由策略 |
 | discovery-plugin-strategy-sentinel | 路由策略的Sentinel |
 | discovery-plugin-strategy-sentinel-starter-local | 路由策略的Sentinel Local Starter |
 | discovery-plugin-strategy-sentinel-starter-apollo | 路由策略的Sentinel Apollo Starter |
 | discovery-plugin-strategy-sentinel-starter-nacos | 路由策略的Sentinel Nacos Starter |
-| discovery-plugin-strategy-opentracing | 调用链的opentracing |
+| discovery-plugin-strategy-sentinel-starter-opentracing | 路由策略的Sentinel OpenTracing Starter |
+| discovery-plugin-strategy-sentinel-starter-skywalking | 路由策略的Sentinel Skywalking Starter |
 | discovery-plugin-strategy-starter-service | 路由策略的Service Starter |
 | discovery-plugin-strategy-starter-service-sentinel | 路由策略的Service Sentinel Starter |
-| discovery-plugin-strategy-starter-service-opentracing | 调用链的Service Opentracing Starter |
 | discovery-plugin-strategy-starter-zuul | 路由策略的Zuul Starter |
-| discovery-plugin-strategy-starter-zuul-opentracing | 调用链的Zuul Opentracing Starter |
 | discovery-plugin-strategy-starter-gateway | 路由策略的Spring Cloud Gateway Starter |
-| discovery-plugin-strategy-starter-gateway-opentracing | 调用链的Spring Cloud Gateway Opentracing Starter |
 | discovery-plugin-strategy-starter-hystrix | 路由策略下，Hystrix做线程模式的服务隔离必须引入的插件 Starter |
+| discovery-plugin-strategy-starter-opentracing | 路由策略的OpenTracing Starter |
+| discovery-plugin-strategy-starter-skywalking | 路由策略的Skywalking Starter |
+| discovery-plugin-strategy-starter-agent | 路由策略的异步跨线程Agent Starter |
+| discovery-plugin-strategy-starter-agent-plugin | 路由策略的异步跨线程Agent Plugin Starter |
 | discovery-plugin-test-starter | 自动化测试 Starter |
 | discovery-console | 控制平台，集成接口给UI |
 | discovery-console-starter-apollo | 控制平台的Apollo Starter |
@@ -507,7 +518,7 @@ Spring Boot Admin监控平台
 </dependency>
 ```
 
-[选择引入] 路由策略时候，Hystrix做线程模式的服务隔离必须引入的插件，信号量模式不需要引入
+[选择引入] 路由策略时候，Hystrix线程池隔离模式下必须引入该插件。灰度路由Header和调用链Span在Hystrix线程池隔离模式（信号量模式不需要引入）下传递时，通过线程上下文切换会存在丢失Header的问题，通过该插件解决，支持微服务端、网关Zuul端和网关Spring Cloud Gateway端
 ```xml
 <dependency>
     <groupId>com.nepxion</groupId>
@@ -567,29 +578,29 @@ spring.application.discovery.control.enabled=false
 </dependency>
 ```
 
-调用链Opentracing功能引入，支持微服务端、网关Zuul端和网关Spring Cloud Gateway端。注意，该模块支持F版或更高版本
+调用链功能引入，包含三大调用链，支持微服务端、网关Zuul端和网关Spring Cloud Gateway端。注意，该模块支持F版或更高版本，且不能同时引入
 ```xml
 微服务端引入
-[选择引入] 调用链Opentracing，如需要，请引入
 <dependency>
     <groupId>com.nepxion</groupId>
-    <artifactId>discovery-plugin-strategy-starter-service-opentracing</artifactId>
+    <artifactId>discovery-plugin-strategy-sentinel-starter-opentracing</artifactId>
+    <artifactId>discovery-plugin-strategy-sentinel-starter-opentelemetry</artifactId>	
+    <artifactId>discovery-plugin-strategy-sentinel-starter-skywalking</artifactId>
+    <version>${discovery.version}</version>
+</dependency>
+```
+
+异步跨线程Agent的引入，灰度路由Header和调用链Span在Hystrix线程池隔离模式下或者线程、线程池、@Async注解等异步调用Feign或者RestTemplate时，通过线程上下文切换会存在丢失Header的问题，通过该插件解决，支持微服务端、网关Zuul端和网关Spring Cloud Gateway端
+```xml
+<dependency>
+    <groupId>com.nepxion</groupId>
+    <artifactId>discovery-plugin-strategy-starter-agent</artifactId>
     <version>${discovery.version}</version>
 </dependency>
 
-网关Zuul端引入
-[选择引入] 调用链Opentracing，如需要，请引入
 <dependency>
     <groupId>com.nepxion</groupId>
-    <artifactId>discovery-plugin-strategy-starter-zuul-opentracing</artifactId>
-    <version>${discovery.version}</version>
-</dependency>
-
-网关Spring Cloud Gateway端引入
-[选择引入] 调用链Opentracing，如需要，请引入
-<dependency>
-    <groupId>com.nepxion</groupId>
-    <artifactId>discovery-plugin-strategy-starter-gateway-opentracing</artifactId>
+    <artifactId>discovery-plugin-strategy-starter-agent-plugin</artifactId>
     <version>${discovery.version}</version>
 </dependency>
 ```
@@ -605,7 +616,7 @@ spring.application.discovery.control.enabled=false
 
 ### 兼容
 版本兼容情况
-- 3.x.x版本不支持Spring Cloud Gateway和Opentracing，其它版本都支持
+- 3.x.x版本不支持Spring Cloud Gateway和调用链，其它版本都支持
 
 中间件兼容情况
 - Consul
@@ -858,7 +869,7 @@ XML示例（Json示例见discovery-springcloud-example-service下的rule.json）
         <!-- 策略中配置条件表达式中的Header来决策蓝绿和灰度，可以代替外部传入Header -->
         <headers>
             <header key="a" value="1"/>
-        </headers>		
+        </headers>
     </strategy-customization>
 
     <!-- 参数控制，由远程推送参数的改变，实现一些特色化的灰度发布，例如，基于数据库的灰度发布 -->
@@ -1021,7 +1032,7 @@ spring.application.strategy.zuul.header.priority=false
     - 如果既执行了全局推送，又执行了局部推送，那么，当服务运行中，优先接受最后一次推送的规则；当服务重新启动的时候，优先读取局部推送的规则
 
 ### 动态改变版本
-注意：动态改变版本，只允许发生在调用链的起点，例如网关，如果没有网关，则取第一个服务。其它服务不使用修改版本
+注意：动态改变版本，只允许发生在调用链的起点，例如网关，如果没有网关，则取第一个服务，其它层级的服务不能使用该功能
 
 微服务启动的时候，由于版本已经写死在application.properties里，使用者希望改变一下版本，而不重启微服务，达到访问版本的路径改变
 - 版本分为本地版本和动态版本
@@ -1271,6 +1282,8 @@ spring.application.strategy.control.enabled=true
 spring.application.strategy.zone.avoidance.rule.enabled=true
 # 启动和关闭路由策略的时候，对REST方式的调用拦截。缺失则默认为true
 spring.application.strategy.rest.intercept.enabled=true
+# 启动和关闭路由策略的时候，对REST方式在异步调用场景下在服务端的Request请求的装饰，当主线程先于子线程执行完的时候，Request会被Destory，导致Header仍旧拿不到，开启装饰，就可以确保拿到。缺失则默认为false
+spring.application.strategy.rest.request.decorator.enabled=true
 # 启动和关闭Header传递的Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
 spring.application.strategy.rest.intercept.debug.enabled=true
 # 路由策略的时候，对REST方式调用拦截的时候（支持Feign或者RestTemplate调用），希望把来自外部自定义的Header参数（用于框架内置上下文Header，例如：trace-id, span-id等）传递到服务里，那么配置如下值。如果多个用“;”分隔，不允许出现空格
@@ -1287,24 +1300,38 @@ spring.application.strategy.register.isolation.enabled=true
 spring.application.strategy.consumer.isolation.enabled=true
 # 启动和关闭提供端的服务隔离（基于Group是否相同的策略）。缺失则默认为false
 spring.application.strategy.provider.isolation.enabled=true
-# 启动和关闭调用链。缺失则默认为false
-spring.application.strategy.trace.enabled=true
-# 启动和关闭调用链的日志输出。缺失则默认为false
-spring.application.strategy.trace.logger.enabled=true
-# 调用链的日志输出中，是否显示MDC前面的Key。缺失则默认为true
-spring.application.strategy.trace.logger.mdc.key.shown=true
-# 启动和关闭调用链的Opentracing输出，支持F版或更高版本的配置，其它版本不需要该行配置。缺失则默认为false
-spring.application.strategy.trace.opentracing.enabled=true
-# 启动和关闭调用链的灰度信息在Opentracing中以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中。缺失则默认为true
-spring.application.strategy.trace.opentracing.separate.span.enabled=true
-# 启动和关闭调用链的灰度规则策略信息在Opentracing中的输出。缺失则默认为false
-spring.application.strategy.trace.opentracing.rule.output.enabled=true
-# 启动和关闭调用链的Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
-spring.application.strategy.trace.debug.enabled=true
+
+# 启动和关闭监控，一旦关闭，调用链和日志输出都将关闭。缺失则默认为false
+spring.application.strategy.monitor.enabled=true
+# 启动和关闭日志输出。缺失则默认为false
+spring.application.strategy.logger.enabled=true
+# 日志输出中，是否显示MDC前面的Key。缺失则默认为true
+spring.application.strategy.logger.mdc.key.shown=true
+# 启动和关闭Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
+spring.application.strategy.logger.debug.enabled=true
+# 启动和关闭调用链输出。缺失则默认为false
+spring.application.strategy.tracer.enabled=true
+# 启动和关闭调用链的灰度信息以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中（Skywalking不支持原生模式）。缺失则默认为true
+spring.application.strategy.tracer.separate.span.enabled=true
+# 启动和关闭调用链的灰度规则策略信息输出。缺失则默认为true
+spring.application.strategy.tracer.rule.output.enabled=true
+# 启动和关闭调用链的异常信息是否以详细格式输出。缺失则默认为false
+spring.application.strategy.tracer.exception.detail.output.enabled=true
+# 启动和关闭类方法上入参和出参输出到调用链。缺失则默认为false
+spring.application.strategy.tracer.method.context.output.enabled=true
+# 显示在调用链界面上灰度Span的名称，建议改成具有公司特色的框架产品名称。缺失则默认为NEPXION
+spring.application.strategy.tracer.span.value=NEPXION
+# 显示在调用链界面上灰度Span Tag的插件名称，建议改成具有公司特色的框架产品的描述。缺失则默认为Nepxion Discovery
+spring.application.strategy.tracer.span.tag.plugin.value=Nepxion Discovery
+# 启动和关闭Sentinel调用链上规则在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为true
+spring.application.strategy.tracer.sentinel.rule.output.enabled=true
+# 启动和关闭Sentinel调用链上方法入参在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为false
+spring.application.strategy.tracer.sentinel.args.output.enabled=true
+
 # 开启服务端实现Hystrix线程隔离模式做服务隔离时，必须把spring.application.strategy.hystrix.threadlocal.supported设置为true，同时要引入discovery-plugin-strategy-starter-hystrix包，否则线程切换时会发生ThreadLocal上下文对象丢失。缺失则默认为false
 spring.application.strategy.hystrix.threadlocal.supported=true
 
-# 启动和关闭Sentinel限流降级熔断权限等功能。缺失则默认为false
+# 启动和关闭Sentinel限流降级熔断权限等原生功能的数据来源扩展和调用链埋点输出。缺失则默认为false
 spring.application.strategy.sentinel.enabled=true
 # 流控规则文件路径。缺失则默认为classpath:sentinel-flow.json
 spring.application.strategy.sentinel.flow.path=classpath:sentinel-flow.json
@@ -1318,6 +1345,12 @@ spring.application.strategy.sentinel.system.path=classpath:sentinel-system.json
 spring.application.strategy.sentinel.param.flow.path=classpath:sentinel-param-flow.json
 # 服务端执行规则时候，以Http请求中的Header值作为关键Key。缺失则默认为n-d-service-id，即以服务名作为关键Key
 spring.application.strategy.service.sentinel.request.origin.key=n-d-service-id
+# 启动和关闭Sentinel LimitApp限流等功能。缺失则默认为false
+spring.application.strategy.service.sentinel.limit.app.enabled=true
+
+# 防止多个网关上并行实施灰度路由产生混乱，对处于非灰度状态的服务，调用它的时候，只取它的老的稳定版本的实例；灰度状态的服务，还是根据传递的Header版本号进行匹配
+# 启动和关闭调用对端服务，是否执行调用它的时候只取它的老的稳定版本的实例的策略。缺失则默认为false
+spring.application.strategy.version.filter.enabled=true
 
 # 启动和关闭环境隔离，环境隔离指调用端实例和提供端实例的元数据Metadata环境配置值相等才能调用。缺失则默认为false
 spring.application.environment.isolation.enabled=true
@@ -1388,22 +1421,38 @@ spring.application.strategy.gateway.original.header.ignored=true
 spring.application.strategy.register.isolation.enabled=true
 # 启动和关闭消费端的服务隔离（基于Group是否相同的策略）。缺失则默认为false
 spring.application.strategy.consumer.isolation.enabled=true
-# 启动和关闭调用链。缺失则默认为false
-spring.application.strategy.trace.enabled=true
-# 启动和关闭调用链的日志输出。缺失则默认为false
-spring.application.strategy.trace.logger.enabled=true
-# 调用链的日志输出中，是否显示MDC前面的Key。缺失则默认为true
-spring.application.strategy.trace.logger.mdc.key.shown=true
-# 启动和关闭调用链的Opentracing输出，支持F版或更高版本的配置，其它版本不需要该行配置。缺失则默认为false
-spring.application.strategy.trace.opentracing.enabled=true
-# 启动和关闭调用链的灰度信息在Opentracing中以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中。缺失则默认为true
-spring.application.strategy.trace.opentracing.separate.span.enabled=true
-# 启动和关闭调用链的灰度规则策略信息在Opentracing中的输出。缺失则默认为false
-spring.application.strategy.trace.opentracing.rule.output.enabled=true
-# 启动和关闭调用链的Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
-spring.application.strategy.trace.debug.enabled=true
+
+# 启动和关闭监控，一旦关闭，调用链和日志输出都将关闭。缺失则默认为false
+spring.application.strategy.monitor.enabled=true
+# 启动和关闭日志输出。缺失则默认为false
+spring.application.strategy.logger.enabled=true
+# 日志输出中，是否显示MDC前面的Key。缺失则默认为true
+spring.application.strategy.logger.mdc.key.shown=true
+# 启动和关闭Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
+spring.application.strategy.logger.debug.enabled=true
+# 启动和关闭调用链输出。缺失则默认为false
+spring.application.strategy.tracer.enabled=true
+# 启动和关闭调用链的灰度信息以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中（Skywalking不支持原生模式）。缺失则默认为true
+spring.application.strategy.tracer.separate.span.enabled=true
+# 启动和关闭调用链的灰度规则策略信息输出。缺失则默认为true
+spring.application.strategy.tracer.rule.output.enabled=true
+# 启动和关闭调用链的异常信息是否以详细格式输出。缺失则默认为false
+spring.application.strategy.tracer.exception.detail.output.enabled=true
+# 显示在调用链界面上灰度Span的名称，建议改成具有公司特色的框架产品名称。缺失则默认为NEPXION
+spring.application.strategy.tracer.span.value=NEPXION
+# 显示在调用链界面上灰度Span Tag的插件名称，建议改成具有公司特色的框架产品的描述。缺失则默认为Nepxion Discovery
+spring.application.strategy.tracer.span.tag.plugin.value=Nepxion Discovery
+# 启动和关闭Sentinel调用链上规则在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为true
+spring.application.strategy.tracer.sentinel.rule.output.enabled=true
+# 启动和关闭Sentinel调用链上方法入参在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为false
+spring.application.strategy.tracer.sentinel.args.output.enabled=true
+
 # 开启Spring Cloud Gateway网关上实现Hystrix线程隔离模式做服务隔离时，必须把spring.application.strategy.hystrix.threadlocal.supported设置为true，同时要引入discovery-plugin-strategy-starter-hystrix包，否则线程切换时会发生ThreadLocal上下文对象丢失。缺失则默认为false
 spring.application.strategy.hystrix.threadlocal.supported=true
+
+# 防止多个网关上并行实施灰度路由产生混乱，对处于非灰度状态的服务，调用它的时候，只取它的老的稳定版本的实例；灰度状态的服务，还是根据传递的Header版本号进行匹配
+# 启动和关闭调用对端服务，是否执行调用它的时候只取它的老的稳定版本的实例的策略。缺失则默认为false
+spring.application.strategy.version.filter.enabled=true
 
 # 启动和关闭环境隔离，环境隔离指调用端实例和提供端实例的元数据Metadata环境配置值相等才能调用。缺失则默认为false
 spring.application.environment.isolation.enabled=true
@@ -1474,22 +1523,38 @@ spring.application.strategy.zuul.original.header.ignored=true
 spring.application.strategy.register.isolation.enabled=true
 # 启动和关闭消费端的服务隔离（基于Group是否相同的策略）。缺失则默认为false
 spring.application.strategy.consumer.isolation.enabled=true
-# 启动和关闭调用链。缺失则默认为false
-spring.application.strategy.trace.enabled=true
-# 启动和关闭调用链的日志输出。缺失则默认为false
-spring.application.strategy.trace.logger.enabled=true
-# 调用链的日志输出中，是否显示MDC前面的Key。缺失则默认为true
-spring.application.strategy.trace.logger.mdc.key.shown=true
-# 启动和关闭调用链的Opentracing输出，支持F版或更高版本的配置，其它版本不需要该行配置。缺失则默认为false
-spring.application.strategy.trace.opentracing.enabled=true
-# 启动和关闭调用链的灰度信息在Opentracing中以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中。缺失则默认为true
-spring.application.strategy.trace.opentracing.separate.span.enabled=true
-# 启动和关闭调用链的灰度规则策略信息在Opentracing中的输出。缺失则默认为false
-spring.application.strategy.trace.opentracing.rule.output.enabled=true
-# 启动和关闭调用链的Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
-spring.application.strategy.trace.debug.enabled=true
+
+# 启动和关闭监控，一旦关闭，调用链和日志输出都将关闭。缺失则默认为false
+spring.application.strategy.monitor.enabled=true
+# 启动和关闭日志输出。缺失则默认为false
+spring.application.strategy.logger.enabled=true
+# 日志输出中，是否显示MDC前面的Key。缺失则默认为true
+spring.application.strategy.logger.mdc.key.shown=true
+# 启动和关闭Debug日志打印，注意每调用一次都会打印一次，会对性能有所影响，建议压测环境和生产环境关闭。缺失则默认为false
+spring.application.strategy.logger.debug.enabled=true
+# 启动和关闭调用链输出。缺失则默认为false
+spring.application.strategy.tracer.enabled=true
+# 启动和关闭调用链的灰度信息以独立的Span节点输出，如果关闭，则灰度信息输出到原生的Span节点中（Skywalking不支持原生模式）。缺失则默认为true
+spring.application.strategy.tracer.separate.span.enabled=true
+# 启动和关闭调用链的灰度规则策略信息输出。缺失则默认为true
+spring.application.strategy.tracer.rule.output.enabled=true
+# 启动和关闭调用链的异常信息是否以详细格式输出。缺失则默认为false
+spring.application.strategy.tracer.exception.detail.output.enabled=true
+# 显示在调用链界面上灰度Span的名称，建议改成具有公司特色的框架产品名称。缺失则默认为NEPXION
+spring.application.strategy.tracer.span.value=NEPXION
+# 显示在调用链界面上灰度Span Tag的插件名称，建议改成具有公司特色的框架产品的描述。缺失则默认为Nepxion Discovery
+spring.application.strategy.tracer.span.tag.plugin.value=Nepxion Discovery
+# 启动和关闭Sentinel调用链上规则在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为true
+spring.application.strategy.tracer.sentinel.rule.output.enabled=true
+# 启动和关闭Sentinel调用链上方法入参在Span上的输出，注意：原生的Sentinel不是Spring技术栈，下面参数必须通过-D方式或者System.setProperty方式等设置进去。缺失则默认为false
+spring.application.strategy.tracer.sentinel.args.output.enabled=true
+
 # 开启Zuul网关上实现Hystrix线程隔离模式做服务隔离时，必须把spring.application.strategy.hystrix.threadlocal.supported设置为true，同时要引入discovery-plugin-strategy-starter-hystrix包，否则线程切换时会发生ThreadLocal上下文对象丢失。缺失则默认为false
 spring.application.strategy.hystrix.threadlocal.supported=true
+
+# 防止多个网关上并行实施灰度路由产生混乱，对处于非灰度状态的服务，调用它的时候，只取它的老的稳定版本的实例；灰度状态的服务，还是根据传递的Header版本号进行匹配
+# 启动和关闭调用对端服务，是否执行调用它的时候只取它的老的稳定版本的实例的策略。缺失则默认为false
+spring.application.strategy.version.filter.enabled=true
 
 # 启动和关闭环境隔离，环境隔离指调用端实例和提供端实例的元数据Metadata环境配置值相等才能调用。缺失则默认为false
 spring.application.environment.isolation.enabled=true
